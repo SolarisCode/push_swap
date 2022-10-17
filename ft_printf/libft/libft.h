@@ -6,7 +6,7 @@
 /*   By: solariscode <solariscode@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/08 05:09:02 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/16 00:12:57 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/17 23:20:08 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 
 typedef struct s_list
 {
-	int				*num;
+	int				num;
+	int				group;
 	struct s_list	*next;
 }					t_list;
 
@@ -60,15 +61,15 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
-t_list	*ft_lstnew(int *num);
+t_list	*ft_lstnew(int num);
 void	ft_lstadd_front(t_list **lst, t_list *new);
 int		ft_lstsize(t_list *lst);
 t_list	*ft_lstlast(t_list *lst);
 void	ft_lstadd_back(t_list **lst, t_list *new);
-void	ft_lstdelone(t_list *lst, void (*del) (int *));
-void	ft_lstclear(t_list **lst, void (*del)(int *));
-void	ft_lstiter(t_list *lst, void (*f)(int *));
-t_list	*ft_lstmap(t_list *lst, void *(f)(int *), void (*del)(int *));
+void	ft_lstdelone(t_list *lst, int (del) (int));
+void	ft_lstclear(t_list **lst, int (del)(int));
+void	ft_lstiter(t_list *lst, int (f)(int));
+t_list	*ft_lstmap(t_list *lst, int (f)(int), int (del)(int));
 char	*ft_strjoin_free(char const *s1, char const *s2);
 int		ft_findnewl(const char *str, int c);
 char	*ft_cut_remain(char *line);

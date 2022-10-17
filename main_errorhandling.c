@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_test.c                                        :+:      :+:    :+:   */
+/*   main_errorhandling.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/16 00:00:10 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/18 01:05:08 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,112 @@ bool	ft_sorted_max(char **argv)
 	return (ft_check_max(argv, array));
 }
 
+void	ft_swap(int *array, int x, int y)
+{
+	int	tmp;
+
+	tmp = array[x];
+	array[x] = array[y];
+	array[y] = tmp;
+}
+
+int	ft_partition(int *array, int start, int end)
+{
+	int	pindex;
+	int	pivot;
+
+	pivot = array[end];
+	pindex = start;
+	while (start < end)
+	{
+		if (array[start] < pivot)
+		{
+			ft_swap(array, start, pindex);
+			pindex ++;
+		}
+		start ++;
+	}
+	ft_swap(array, pindex, end);
+	return (pindex);
+}
+
+void	ft_quicksort(int *array, int start, int end)
+{
+	int	pindex;
+
+	if (start >= end)
+		return ;
+	pindex = ft_partition(array, start, end);
+	ft_quicksort(array, start, pindex - 1);
+	ft_quicksort(array, pindex + 1, end);
+}
+
+int	ft_get_pivot(char **argv)
+{
+	int	size;
+	int	count;
+	int	*array;
+
+	size = -1;
+	while (argv[++size]);
+	array = (int *)ft_calloc(size, sizeof(int));
+	if (!array)
+		return (0);
+	count = -1;
+	while (argv[++count])
+		array[count] = ft_atoi(argv[count]);
+	ft_quicksort(array, 0, size - 1);
+	count = array[size / 2];
+	free(array);
+	return (count);
+}
+
+t_list	*ft_stack_a(char **argv)
+{
+	t_list	*stack_a;
+	int		count;
+
+	count = 0;
+	stack_a = ft_lstnew(ft_atoi(argv[0]));
+	while (argv[++count])
+		ft_lstadd_back(&stack_a, ft_lstnew(ft_atoi(argv[count])));
+	return (stack_a);
+}
+
+// void	ft_print_stack(t_list *stack)
+// {
+// 	t_list	*tmp;
+//
+// 	tmp = stack;
+// 	ft_printf("Unsorted array\n");
+// 	while (tmp)
+// 	{
+// 		ft_printf("%d ", tmp->num);
+// 		tmp = tmp->next;
+// 	}
+// 	ft_printf("\n");
+// }
+
+void	ft_swap_nodes(t_list **stack, char *action)
+{
+	t_list	*head;
+
+	head = (*stack)->next;
+	(*stack)->next = (*stack)->next->next;
+	head->next = *stack;
+	*stack = head;
+	ft_printf("%s\n", action);
+}
+
 void	ft_check_input(char **argv)
 {
+	t_list	*stack_a;
+	int		pivot;
+
 	if (!ft_check_nbr(argv) || ft_sorted_max(argv))
 		return ;
+	stack_a = ft_stack_a(argv);
+	pivot = ft_get_pivot(argv);
 }
 
 int	main(int argc, char *argv[])

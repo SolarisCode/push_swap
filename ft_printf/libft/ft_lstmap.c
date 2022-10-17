@@ -6,13 +6,13 @@
 /*   By: solariscode <solariscode@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 03:55:52 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/16 00:12:02 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/17 23:17:01 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstmap(t_list *lst, void *(f)(int *), void (*del)(int *))
+t_list	*ft_lstmap(t_list *lst, int (f)(int), int (del)(int))
 {
 	t_list	*new;
 

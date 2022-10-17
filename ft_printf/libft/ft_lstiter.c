@@ -6,13 +6,13 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 03:38:46 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/16 00:12:10 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/17 23:17:38 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstiter(t_list *lst, void (*f)(int *))
+void	ft_lstiter(t_list *lst, int (f)(int))
 {
 	if (!lst || !(*f))
 		return ;

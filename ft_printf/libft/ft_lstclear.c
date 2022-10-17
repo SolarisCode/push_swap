@@ -6,13 +6,13 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 03:23:18 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/15 19:51:58 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/17 23:19:54 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(int *))
+void	ft_lstclear(t_list **lst, int (del)(int))
 {
 	t_list	*current;
 
