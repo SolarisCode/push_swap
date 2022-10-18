@@ -6,7 +6,7 @@
 /*   By: solariscode <solariscode@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 02:29:25 by melkholy          #+#    #+#             */
-/*   Updated: 2022/02/13 07:47:54 by solariscode      ###   ########.fr       */
+/*   Updated: 2022/10/19 01:06:01 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 		return ;
 	}
 	temp = ft_lstlast(*lst);
+	new->prev = temp;
 	temp->next = new;
 }

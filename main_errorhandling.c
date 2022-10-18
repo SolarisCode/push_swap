@@ -6,11 +6,12 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/18 01:05:08 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/19 01:43:22 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <limits.h>
 #include "ft_printf/ft_printf_bonus.h"
 #include "ft_printf/libft/libft.h"
 #include <stdbool.h>
@@ -47,25 +48,25 @@ bool	ft_check_nbr(char **argv)
 	return (true);
 }
 
-bool	ft_check_max(char **argv, int *array)
-{
-	int		count;
-	bool	max;
-
-	count = -1;
-	max = false;
-	while (argv[++count])
-	{
-		if (argv[count][0] == '-' && array[count] > 0)
-			max = true;
-		else if (argv[count][0] != '-' && array[count] < 0)
-			max = true;
-	}
-	free(array);
-	if (max)
-		ft_putstr_fd("Error\n", 1);
-	return (max);
-}
+// bool	ft_check_max(char **argv, int *array)
+// {
+// 	int		count;
+// 	bool	max;
+//
+// 	count = -1;
+// 	max = false;
+// 	while (argv[++count])
+// 	{
+// 		if (argv[count][0] == '-' && array[count] > 0)
+// 			max = true;
+// 		else if (argv[count][0] != '-' && array[count] < 0)
+// 			max = true;
+// 	}
+// 	free(array);
+// 	if (max)
+// 		ft_putstr_fd("Error\n", 1);
+// 	return (max);
+// }
 
 bool	ft_sorted_max(char **argv)
 {
@@ -80,13 +81,19 @@ bool	ft_sorted_max(char **argv)
 		return (NULL);
 	count = -1;
 	while (argv[++count])
-		array[count] = ft_atoi(argv[count]);
+		if (ft_atoi(argv[count]) > INT_MAX || ft_atoi(argv[count]) < INT_MIN)
+		{
+			ft_putstr_fd("Error\n", 1);
+			return (free(array), true);
+		}
+		else
+			array[count] = (int)ft_atoi(argv[count]);
 	count = 0;
 	while(count <= size - 2 && array[count] < array[count + 1])
 		count ++;
 	if (count == size - 1)
 		return (free(array), true);
-	return (ft_check_max(argv, array));
+	return (false);
 }
 
 void	ft_swap(int *array, int x, int y)
@@ -161,19 +168,46 @@ t_list	*ft_stack_a(char **argv)
 	return (stack_a);
 }
 
-// void	ft_print_stack(t_list *stack)
-// {
-// 	t_list	*tmp;
-//
-// 	tmp = stack;
-// 	ft_printf("Unsorted array\n");
-// 	while (tmp)
-// 	{
-// 		ft_printf("%d ", tmp->num);
-// 		tmp = tmp->next;
-// 	}
-// 	ft_printf("\n");
-// }
+void	ft_print_stack(t_list *stack)
+{
+	t_list	*tmp;
+
+	tmp = stack;
+	ft_printf("Unsorted array\n");
+	while (tmp)
+	{
+		ft_printf("%d ", tmp->num);
+		tmp = tmp->next;
+	}
+	ft_printf("\n");
+}
+
+void	ft_reverse_rotate(t_list **stack, char *action)
+{
+	t_list	*head;
+
+	head = *stack;
+	head = ft_lstlast(*stack);
+	head->next = *stack;
+	(*stack)->prev = head;
+	*stack = head;
+	head->prev->next = NULL;
+	head->prev = NULL;
+	ft_printf("%s\n", action);
+}
+
+void	ft_rotate_nodes(t_list **stack, char *action)
+{
+	t_list	*tail;
+
+	tail = ft_lstlast(*stack);
+	tail->next = *stack;
+	(*stack)->prev = tail;
+	*stack = (*stack)->next;
+	(*stack)->prev = NULL;
+	tail->next->next = NULL;
+	ft_printf("%s\n", action);
+}
 
 void	ft_swap_nodes(t_list **stack, char *action)
 {
@@ -181,20 +215,48 @@ void	ft_swap_nodes(t_list **stack, char *action)
 
 	head = (*stack)->next;
 	(*stack)->next = (*stack)->next->next;
+	(*stack)->next->prev = (*stack);
+	(*stack)->prev = head;
 	head->next = *stack;
+	head->prev = NULL;
 	*stack = head;
 	ft_printf("%s\n", action);
+}
+
+t_list	*ft_stack_b(t_list *stack_a, int pivot)
+{
+	t_list	*stack_b;
+	t_list	*pnode;
+	t_list	*tmp;
+	int		count;
+
+	count = -1;
+	pnode = stack_a;
+	while (pnode && pnode->num != pivot)
+		pnode = pnode->next;
+	tmp = stack_a;
+	while (++count < 2 && tmp->num > pivot)
+		tmp = tmp->next;
+	// if () to be continued
+	return (NULL);
 }
 
 void	ft_check_input(char **argv)
 {
 	t_list	*stack_a;
+	t_list	*stack_b;
 	int		pivot;
 
 	if (!ft_check_nbr(argv) || ft_sorted_max(argv))
 		return ;
 	stack_a = ft_stack_a(argv);
+	// ft_print_stack(stack_a);
+	// ft_reverse_rotate(&stack_a, "rra");
+	// ft_rotate_nodes(&stack_a, "ra");
+	// ft_swap_nodes(&stack_a, "sa");
+	// ft_print_stack(stack_a);
 	pivot = ft_get_pivot(argv);
+	stack_b = ft_stack_b(stack_a, pivot);
 }
 
 int	main(int argc, char *argv[])

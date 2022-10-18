@@ -6,7 +6,7 @@
 /*   By: solariscode <solariscode@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/08 05:09:02 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/17 23:20:08 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/19 01:05:55 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct s_list
 {
 	int				num;
 	int				group;
+	struct s_list	*prev;
 	struct s_list	*next;
 }					t_list;
 
@@ -47,7 +48,7 @@ int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	*ft_memchr(const void *str, int c, size_t n);
 int		ft_memcmp(const void *st1, const void *st2, size_t n);
 char	*ft_strnstr(const char *big, const char *lit, size_t n);
-int		ft_atoi(const char *str);
+long	ft_atoi(const char *str);
 void	*ft_calloc(size_t nmemb, size_t size);
 char	*ft_strdup(const char *str);
 char	*ft_substr(char const *s, unsigned int start, size_t len);

@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 01:41:36 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/18 00:11:48 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/19 01:06:08 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ t_list	*ft_lstnew(int num)
 	if (!new)
 		return (NULL);
 	new->num = num;
+	new->prev = NULL;
 	new->next = NULL;
 	return (new);
 }
