@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/19 01:43:22 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/20 02:33:53 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,22 +136,54 @@ void	ft_quicksort(int *array, int start, int end)
 	ft_quicksort(array, pindex + 1, end);
 }
 
-int	ft_get_pivot(char **argv)
+int	ft_get_median(int *array, int size)
 {
-	int	size;
 	int	count;
-	int	*array;
+	int	diff[2];
+	int	median;
 
-	size = -1;
-	while (argv[++size]);
+	median = (array[0] + array[size / 2] + array[size - 1]) / 3;
+	diff[0] = median - array[0];
+	if (median - array[0] < 0)
+		diff[0] *= -1;
+	diff[1] = 0;
+	count = 1;
+	while (count < size && median > array[count])
+	{
+		if (diff[0] > median - array[count])
+		{
+			diff[0] = median - array[count];
+			if (median - array[count] < 0)
+				diff[0] *= -1;
+			diff[1] = count;
+		}
+		count ++;
+	}
+	return (array[diff[1]]);
+}
+
+int	ft_get_pivot(t_list *stack)
+{
+	t_list	*tmp;
+	int		*array;
+	int		size;
+	int		count;
+
+	size = ft_lstsize(stack);
 	array = (int *)ft_calloc(size, sizeof(int));
 	if (!array)
 		return (0);
-	count = -1;
-	while (argv[++count])
-		array[count] = ft_atoi(argv[count]);
+	tmp = stack;
+	count = 0;
+	while (tmp)
+	{
+		array[count] = tmp->num;
+		tmp = tmp->next;
+		count ++;
+	}
 	ft_quicksort(array, 0, size - 1);
-	count = array[size / 2];
+	// count = array[size / 2];
+	count = ft_get_median(array, size);
 	free(array);
 	return (count);
 }
@@ -209,6 +241,29 @@ void	ft_rotate_nodes(t_list **stack, char *action)
 	ft_printf("%s\n", action);
 }
 
+void	ft_push_node(t_list **src, t_list **dst, char *action)
+{
+	t_list	*tmp;
+
+	if (!*dst)
+	{
+		*dst = ft_lstnew((*src)->num);
+		tmp = *src;
+		*src = (*src)->next;
+		(*src)->prev = NULL;
+		ft_printf("pb\n");
+		free(tmp);
+		return ;
+	}
+	(*dst)->prev = *src;
+	*src = (*src)->next;
+	(*src)->prev = NULL;
+	(*dst)->prev->next = *dst;
+	*dst = (*dst)->prev;
+	(*dst)->prev = NULL;
+	ft_printf("%s\n", action);
+}
+
 void	ft_swap_nodes(t_list **stack, char *action)
 {
 	t_list	*head;
@@ -223,29 +278,168 @@ void	ft_swap_nodes(t_list **stack, char *action)
 	ft_printf("%s\n", action);
 }
 
-t_list	*ft_stack_b(t_list *stack_a, int pivot)
+void	ft_push_b(t_list **stack_a, t_list **stack_b, int down, int up)
 {
-	t_list	*stack_b;
-	t_list	*pnode;
-	t_list	*tmp;
-	int		count;
+	if ((down < 0 || down >= ft_lstsize(*stack_a)) && (up < 0 \
+					|| up >= ft_lstsize(*stack_a)))
+			return ;
+	else if (down == 0)
+		ft_push_node(stack_a, stack_b, "pb");
+	else if (down == 1)
+	{
+		ft_swap_nodes(stack_a, "sa");
+		ft_push_node(stack_a, stack_b, "pb");
+	}
+	else if (down <= up)
+	{
+		ft_rotate_nodes(stack_a, "ra");
+		ft_push_b(stack_a, stack_b, down - 1, up + 1);
+	}
+	else
+	{
+		ft_reverse_rotate(stack_a, "rra");
+		if (up - 1 < 0)
+			ft_push_node(stack_a, stack_b, "pb");
+		ft_push_b(stack_a, stack_b, down + 1, up - 1);
+	}
+}
 
-	count = -1;
-	pnode = stack_a;
-	while (pnode && pnode->num != pivot)
-		pnode = pnode->next;
-	tmp = stack_a;
-	while (++count < 2 && tmp->num > pivot)
+// void	ft_b_to_a(t_list **stack_a, t_list **stack_b)
+// {
+// 	t_list	*tmp;
+// 	int		pivot;
+// 	int		down;
+// 	int		up;
+//
+// 	down = 0;
+// 	up = 0;
+// 	if (!*stack_b)
+// 		return ;
+// 	pivot = ft_get_pivot(*stack_a);
+// 	tmp = *stack_a;
+// 	while (tmp && tmp->num > pivot)
+// 	{
+// 		tmp = tmp->next;
+// 		down ++;
+// 	}
+// 	tmp = ft_lstlast(*stack_a);
+// 	while (tmp && tmp->num > pivot)
+// 	{
+// 		tmp = tmp->prev;
+// 		up ++;
+// 	}
+// 	ft_push_b(stack_a, stack_b, down, up);
+// 	ft_stack_b(stack_a, stack_b);
+// 	return (*stack_b);
+// }
+
+void	ft_set_groups(t_list **stack_b, int group)
+{
+	t_list *tmp;
+
+	tmp = *stack_b;
+	while (tmp)
+	{
+		if (tmp->group == 0)
+			tmp->group = group;
 		tmp = tmp->next;
-	// if () to be continued
-	return (NULL);
+	}
+}
+
+bool	ft_check_smaller(t_list *stack, int pivot)
+{
+	t_list	*tmp;
+	bool	found;
+
+	found = false;
+	tmp = stack;
+	while (tmp)
+	{
+		if (tmp->num < pivot)
+			found = true;
+		tmp = tmp->next;
+	}
+	return (found);
+}
+
+void	ft_create_groups(t_list **stack_a, t_list **stack_b, int pivot)
+{
+	t_list	*tmp;
+	int		down;
+	int		up;
+
+	down = -1;
+	up = -1;
+	tmp = *stack_a;
+	while (tmp)
+	{
+		down ++;
+		if (tmp->num < pivot)
+			break ;
+		tmp = tmp->next;
+	}
+	tmp = ft_lstlast(*stack_a);
+	while (tmp)
+	{
+		up ++;
+		if (tmp->num < pivot)
+			break ;
+		tmp = tmp->prev;
+	}
+	// while (tmp && tmp->num > pivot)
+	// {
+	// 	tmp = tmp->next;
+	// 	down ++;
+	// }
+	// tmp = ft_lstlast(*stack_a);
+	// while (tmp && tmp->num > pivot)
+	// {
+	// 	tmp = tmp->prev;
+	// 	up ++;
+	// }
+	ft_printf("Down: %d\nUp: %d\n", down , up);
+	if ((down < 0 && up < 0) || !ft_check_smaller(*stack_a, pivot))
+		return ;
+	ft_push_b(stack_a, stack_b, down, up);
+	ft_printf("####################################################################\n");
+	ft_create_groups(stack_a, stack_b, pivot);
+}
+
+t_list	*ft_stack_b(t_list **stack_a, t_list **stack_b)
+{
+	static int	group;
+	// t_list		*tmp;
+	int			pivot;
+
+	if (ft_lstsize(*stack_a) < 3)
+		return (*stack_b);
+	pivot = ft_get_pivot(*stack_a);
+	ft_printf("Pivot: %d\n", pivot);
+	// tmp = *stack_a;
+	// while (tmp && tmp->num > pivot)
+	// {
+	// 	tmp = tmp->next;
+	// 	down ++;
+	// }
+	// tmp = ft_lstlast(*stack_a);
+	// while (tmp && tmp->num > pivot)
+	// {
+	// 	tmp = tmp->prev;
+	// 	up ++;
+	// }
+	// ft_push_b(stack_a, stack_b, down, up);
+	ft_printf("hey\n");
+	ft_create_groups(stack_a, stack_b, pivot);
+	ft_set_groups(stack_b, ++group);
+	ft_print_stack(*stack_b);
+	ft_stack_b(stack_a, stack_b);
+	return (*stack_b);
 }
 
 void	ft_check_input(char **argv)
 {
 	t_list	*stack_a;
 	t_list	*stack_b;
-	int		pivot;
 
 	if (!ft_check_nbr(argv) || ft_sorted_max(argv))
 		return ;
@@ -255,8 +449,10 @@ void	ft_check_input(char **argv)
 	// ft_rotate_nodes(&stack_a, "ra");
 	// ft_swap_nodes(&stack_a, "sa");
 	// ft_print_stack(stack_a);
-	pivot = ft_get_pivot(argv);
-	stack_b = ft_stack_b(stack_a, pivot);
+	stack_b = NULL;
+	stack_b = ft_stack_b(&stack_a, &stack_b);
+	ft_print_stack(stack_a);
+	ft_print_stack(stack_b);
 }
 
 int	main(int argc, char *argv[])
