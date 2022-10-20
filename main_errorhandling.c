@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/20 02:33:53 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/20 21:43:50 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ int	ft_get_median(int *array, int size)
 		diff[0] *= -1;
 	diff[1] = 0;
 	count = 1;
+	ft_printf("Median: %d\n", median);
 	while (count < size && median > array[count])
 	{
 		if (diff[0] > median - array[count])
@@ -182,8 +183,8 @@ int	ft_get_pivot(t_list *stack)
 		count ++;
 	}
 	ft_quicksort(array, 0, size - 1);
-	// count = array[size / 2];
-	count = ft_get_median(array, size);
+	count = array[size / 2];
+	// count = ft_get_median(array, size);
 	free(array);
 	return (count);
 }
@@ -280,8 +281,8 @@ void	ft_swap_nodes(t_list **stack, char *action)
 
 void	ft_push_b(t_list **stack_a, t_list **stack_b, int down, int up)
 {
-	if ((down < 0 || down >= ft_lstsize(*stack_a)) && (up < 0 \
-					|| up >= ft_lstsize(*stack_a)))
+	// ft_printf("Down: %d\nUp: %d\n", down , up);
+	if (down < 0 || up < 0)
 			return ;
 	else if (down == 0)
 		ft_push_node(stack_a, stack_b, "pb");
@@ -362,76 +363,92 @@ bool	ft_check_smaller(t_list *stack, int pivot)
 	return (found);
 }
 
-void	ft_create_groups(t_list **stack_a, t_list **stack_b, int pivot)
+int	ft_bottom_small(t_list *stack, int pivot)
 {
 	t_list	*tmp;
+	int		bottom;
+
+	tmp = ft_lstlast(stack);
+	bottom = -1;
+	while (tmp)
+	{
+		bottom ++;
+		if (tmp->num < pivot)
+			return (bottom);
+		tmp = tmp->prev;
+	}
+	return (-1);
+}
+
+int	ft_top_small(t_list *stack, int pivot)
+{
+	t_list	*tmp;
+	int		top;
+
+	tmp = stack;
+	top = -1;
+	while (tmp)
+	{
+		top ++;
+		if (tmp->num < pivot)
+			return (top);
+		tmp = tmp->next;
+	}
+	return (-1);
+}
+
+void	ft_create_groups(t_list **stack_a, t_list **stack_b, int pivot)
+{
 	int		down;
 	int		up;
 
-	down = -1;
-	up = -1;
-	tmp = *stack_a;
-	while (tmp)
-	{
-		down ++;
-		if (tmp->num < pivot)
-			break ;
-		tmp = tmp->next;
-	}
-	tmp = ft_lstlast(*stack_a);
-	while (tmp)
-	{
-		up ++;
-		if (tmp->num < pivot)
-			break ;
-		tmp = tmp->prev;
-	}
-	// while (tmp && tmp->num > pivot)
-	// {
-	// 	tmp = tmp->next;
-	// 	down ++;
-	// }
-	// tmp = ft_lstlast(*stack_a);
-	// while (tmp && tmp->num > pivot)
-	// {
-	// 	tmp = tmp->prev;
-	// 	up ++;
-	// }
-	ft_printf("Down: %d\nUp: %d\n", down , up);
+	down = ft_top_small(*stack_a, pivot);
+	up = ft_bottom_small(*stack_a, pivot);
 	if ((down < 0 && up < 0) || !ft_check_smaller(*stack_a, pivot))
 		return ;
 	ft_push_b(stack_a, stack_b, down, up);
-	ft_printf("####################################################################\n");
 	ft_create_groups(stack_a, stack_b, pivot);
+}
+
+void	ft_send_pivot(t_list **stack_a, t_list **stack_b, int pivot)
+{
+	t_list	*tmp;
+	int		count;
+	int		found;
+
+	tmp = *stack_a;
+	count = -1;
+	found = -1;
+	while (tmp)
+	{
+		count ++;
+		if (tmp->num == pivot)
+			found = count;
+		tmp = tmp->next;
+	}
+	if (found < 3 && found >= 0)
+		ft_push_b(stack_a, stack_b, found, 4);
+	else if (found == 3)
+		ft_push_b(stack_a, stack_b, found, 0);
 }
 
 t_list	*ft_stack_b(t_list **stack_a, t_list **stack_b)
 {
 	static int	group;
-	// t_list		*tmp;
 	int			pivot;
 
 	if (ft_lstsize(*stack_a) < 3)
 		return (*stack_b);
 	pivot = ft_get_pivot(*stack_a);
-	ft_printf("Pivot: %d\n", pivot);
-	// tmp = *stack_a;
-	// while (tmp && tmp->num > pivot)
-	// {
-	// 	tmp = tmp->next;
-	// 	down ++;
-	// }
-	// tmp = ft_lstlast(*stack_a);
-	// while (tmp && tmp->num > pivot)
-	// {
-	// 	tmp = tmp->prev;
-	// 	up ++;
-	// }
-	// ft_push_b(stack_a, stack_b, down, up);
-	ft_printf("hey\n");
+	// ft_printf("Pivot: %d\n", pivot);
+	if (!ft_check_smaller(*stack_a, pivot) && !(ft_lstsize(*stack_a) < 3))
+	{
+		ft_send_pivot(stack_a, stack_b, pivot);
+		return (*stack_b);
+	}
 	ft_create_groups(stack_a, stack_b, pivot);
 	ft_set_groups(stack_b, ++group);
-	ft_print_stack(*stack_b);
+	// ft_print_stack(*stack_b);
 	ft_stack_b(stack_a, stack_b);
 	return (*stack_b);
 }
@@ -451,8 +468,8 @@ void	ft_check_input(char **argv)
 	// ft_print_stack(stack_a);
 	stack_b = NULL;
 	stack_b = ft_stack_b(&stack_a, &stack_b);
-	ft_print_stack(stack_a);
-	ft_print_stack(stack_b);
+	// ft_print_stack(stack_a);
+	// ft_print_stack(stack_b);
 }
 
 int	main(int argc, char *argv[])
