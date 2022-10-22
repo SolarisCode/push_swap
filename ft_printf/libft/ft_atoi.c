@@ -6,17 +6,17 @@
 /*   By: solariscode <solariscode@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 01:54:35 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/19 00:58:05 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/22 00:42:09 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-long	ft_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
-	int		count;
-	long	val;
-	int		sign;
+	int	count;
+	int	val;
+	int	sign;
 
 	count = 0;
 	val = 0;
