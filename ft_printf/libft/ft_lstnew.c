@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/11 01:41:36 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/19 01:06:08 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/23 02:26:00 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ t_list	*ft_lstnew(int num)
 {
 	t_list	*new;
 
-	new = (t_list *)malloc(sizeof(t_list));
+	new = (t_list *)ft_calloc(1, sizeof(t_list));
 	if (!new)
 		return (NULL);
 	new->num = num;

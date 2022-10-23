@@ -6,15 +6,15 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/22 02:59:18 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/23 02:22:16 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <limits.h>
+#include <stdbool.h>
 #include "ft_printf/ft_printf_bonus.h"
 #include "ft_printf/libft/libft.h"
-#include <stdbool.h>
 
 long	ft_atolong(const char *str)
 {
@@ -68,7 +68,7 @@ bool	ft_check_nbr(char **argv)
 		index = -1;
 		while (argv[++index])
 			if (count != index && !ft_strcmp(argv[count], argv[index]))
-					return (ft_putstr_fd("Error\n", 1), false);
+				return (ft_putstr_fd("Error\n", 1), false);
 	}
 	return (true);
 }
@@ -93,31 +93,41 @@ bool	ft_check_nbr(char **argv)
 // 	return (max);
 // }
 
+bool	ft_check_max(char **argv)
+{
+	int	count;
+
+	count = -1;
+	while (argv[++count])
+		if (ft_atolong(argv[count]) > INT_MAX || \
+				ft_atolong(argv[count]) < INT_MIN)
+			return (true);
+	return (false);
+}
+
 bool	ft_sorted_max(char **argv)
 {
 	int	size;
 	int	count;
 	int	*array;
 
-	size = -1;
-	while (argv[++size]);
+	size = 0;
+	if (ft_check_max(argv))
+		return (true);
+	while (argv[size])
+		size ++;
 	array = (int *)ft_calloc(size, sizeof(int));
 	if (!array)
 		return (NULL);
 	count = -1;
 	while (argv[++count])
-		if (ft_atolong(argv[count]) > INT_MAX || ft_atolong(argv[count]) < INT_MIN)
-		{
-			ft_putstr_fd("Error\n", 1);
-			return (free(array), true);
-		}
-		else
-			array[count] = (int)ft_atolong(argv[count]);
+		array[count] = (int)ft_atolong(argv[count]);
 	count = 0;
-	while(count <= size - 2 && array[count] < array[count + 1])
+	while (count <= size - 2 && array[count] < array[count + 1])
 		count ++;
 	if (count == size - 1)
 		return (free(array), true);
+	free(array);
 	return (false);
 }
 
@@ -207,9 +217,10 @@ int	ft_get_pivot(t_list *stack)
 		tmp = tmp->next;
 		count ++;
 	}
-	ft_quicksort(array, 0, size - 1);
-	count = array[size / 2];
-	// count = ft_get_median(array, size);
+	ft_quicksort(array, 0, count - 1);
+	while (count > 75)
+		count /= 2;
+	count = array[count / 2];
 	free(array);
 	return (count);
 }
@@ -293,6 +304,8 @@ t_list	*ft_stack_a(char **argv)
 
 	count = 0;
 	stack_a = ft_lstnew((int)ft_atolong(argv[0]));
+	if (!stack_a)
+		return (NULL);
 	while (argv[++count])
 		ft_lstadd_back(&stack_a, ft_lstnew((int)ft_atolong(argv[count])));
 	array = ft_get_index(stack_a);
@@ -335,6 +348,8 @@ void	ft_push_node(t_list **src, t_list **dst, char *action)
 	if (!*dst)
 	{
 		*dst = ft_lstnew((*src)->num);
+		if (!*dst)
+			return ;
 		(*dst)->index = (*src)->index;
 		tmp = *src;
 		*src = (*src)->next;
@@ -371,7 +386,7 @@ void	ft_swap_nodes(t_list **stack, char *action)
 void	ft_push_b(t_list **stack_a, t_list **stack_b, int top, int bottom)
 {
 	if (top < 0 || bottom < 0)
-			return ;
+		return ;
 	else if (top == 0)
 		ft_push_node(stack_a, stack_b, "pb");
 	else if (top == 1)
@@ -395,8 +410,9 @@ void	ft_push_b(t_list **stack_a, t_list **stack_b, int top, int bottom)
 
 void	ft_set_groups(t_list **stack_b, int group)
 {
-	t_list *tmp;
+	t_list	*tmp;
 
+	tmp = NULL;
 	tmp = *stack_b;
 	while (tmp)
 	{
@@ -513,7 +529,7 @@ t_list	*ft_stack_b(t_list **stack_a, t_list **stack_b)
 void	ft_push_a(t_list **stack_b, t_list **stack_a, int top, int bottom)
 {
 	if (top < 0 || bottom < 0)
-			return ;
+		return ;
 	else if (top == 0)
 		ft_push_node(stack_b, stack_a, "pa");
 	else if (top == 1)
@@ -601,6 +617,19 @@ void	ft_sort_remain(t_list **stack)
 	}
 }
 
+void	ft_free_stack(t_list **stack)
+{
+	t_list	*tmp;
+
+	tmp = *stack;
+	while (tmp)
+	{
+		*stack = (*stack)->next;
+		free(tmp);
+		tmp = *stack;
+	}
+}
+
 void	ft_check_input(char **argv)
 {
 	t_list	*stack_a;
@@ -609,12 +638,14 @@ void	ft_check_input(char **argv)
 	if (!ft_check_nbr(argv) || ft_sorted_max(argv))
 		return ;
 	stack_a = ft_stack_a(argv);
+	if (!stack_a)
+		return ;
 	stack_b = NULL;
 	stack_b = ft_stack_b(&stack_a, &stack_b);
 	ft_sort_remain(&stack_a);
 	ft_sort_stack(&stack_a, &stack_b);
-	// ft_print_stack(stack_a);
-	// ft_print_stack(stack_b);
+	ft_free_stack(&stack_a);
+	ft_free_stack(&stack_b);
 }
 
 int	main(int argc, char *argv[])
