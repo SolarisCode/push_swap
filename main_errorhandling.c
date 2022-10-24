@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/25 00:23:53 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/25 01:01:23 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -733,6 +733,7 @@ void	ft_small_stack(char **argv)
 	t_list	*stack_a;
 	t_list	*stack_b;
 	int		*array;
+	int		count;
 
 	if (!ft_check_nbr(argv) || ft_sorted_max(argv))
 		return ;
@@ -744,12 +745,14 @@ void	ft_small_stack(char **argv)
 	free(array);
 	stack_b = NULL;
 	ft_sort_five(&stack_a, &stack_b);
-	if (stack_b->index == ft_lstlast(stack_a)->index + 1)
-		ft_swap_nodes(&stack_b, "sb");
-	ft_push_node(&stack_b, &stack_a, "pa");
-	ft_push_node(&stack_b, &stack_a, "pa");
-	ft_rotate_nodes(&stack_a, "ra");
-	ft_rotate_nodes(&stack_a, "ra");
+	if (ft_lstsize(stack_b) > 1 && stack_b->index != ft_lstlast(stack_a)->index + 1)
+		ft_sort_remain(&stack_b);
+	count = -1;
+	while (++count <= ft_lstsize(stack_b))
+	{
+		ft_push_node(&stack_b, &stack_a, "pa");
+		ft_rotate_nodes(&stack_a, "ra");
+	}
 	ft_free_stack(&stack_a);
 	ft_free_stack(&stack_b);
 }
