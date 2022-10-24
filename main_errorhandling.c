@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/24 23:26:24 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/25 00:23:53 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -699,9 +699,9 @@ void	ft_remain_five(t_list **stack)
 			num3 = (*stack)->next->next->num;
 			if (num1 < num2 && num2 > num3)
 				ft_reverse_rotate(stack, "rra");
-			if ((num1 > num2 && num1 > num3) )
+			else if ((num1 > num2 && num1 > num3) )
 				ft_rotate_nodes(stack, "ra");
-			if (num1 > num2 && num2 < num3)
+			else if (num1 > num2 && num2 < num3)
 				ft_swap_nodes(stack, "sa");
 		}
 	}
@@ -750,8 +750,8 @@ void	ft_small_stack(char **argv)
 	ft_push_node(&stack_b, &stack_a, "pa");
 	ft_rotate_nodes(&stack_a, "ra");
 	ft_rotate_nodes(&stack_a, "ra");
-	// ft_print_stack(stack_a);
-	// ft_print_stack(stack_b);
+	ft_free_stack(&stack_a);
+	ft_free_stack(&stack_b);
 }
 
 int	main(int argc, char *argv[])
