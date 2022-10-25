@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/25 01:01:23 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/25 22:03:49 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,29 +225,6 @@ int	ft_get_pivot(t_list *stack)
 	return (count);
 }
 
-int	*ft_get_index(t_list *stack)
-{
-	t_list	*tmp;
-	int		*array;
-	int		size;
-	int		count;
-
-	size = ft_lstsize(stack);
-	array = (int *)ft_calloc(size, sizeof(int));
-	if (!array)
-		return (0);
-	tmp = stack;
-	count = 0;
-	while (tmp)
-	{
-		array[count] = tmp->num;
-		tmp = tmp->next;
-		count ++;
-	}
-	ft_quicksort(array, 0, size - 1);
-	return (array);
-}
-
 int	ft_find_index(int *array, int num, int end)
 {
 	int		mid;
@@ -282,6 +259,30 @@ void	ft_set_index(t_list *stack, int *array)
 	}
 }
 
+void	ft_get_index(t_list *stack)
+{
+	t_list	*tmp;
+	int		*array;
+	int		size;
+	int		count;
+
+	size = ft_lstsize(stack);
+	array = (int *)ft_calloc(size, sizeof(int));
+	if (!array)
+		return ;
+	tmp = stack;
+	count = 0;
+	while (tmp)
+	{
+		array[count] = tmp->num;
+		tmp = tmp->next;
+		count ++;
+	}
+	ft_quicksort(array, 0, size - 1);
+	ft_set_index(stack, array);
+	free(array);
+}
+
 void	ft_print_stack(t_list *stack)
 {
 	t_list	*tmp;
@@ -299,7 +300,6 @@ void	ft_print_stack(t_list *stack)
 t_list	*ft_stack_a(char **argv)
 {
 	t_list	*stack_a;
-	int		*array;
 	int		count;
 
 	count = 0;
@@ -308,9 +308,7 @@ t_list	*ft_stack_a(char **argv)
 		return (NULL);
 	while (argv[++count])
 		ft_lstadd_back(&stack_a, ft_lstnew((int)ft_atolong(argv[count])));
-	array = ft_get_index(stack_a);
-	ft_set_index(stack_a, array);
-	free(array);
+	ft_get_index(stack_a);
 	return (stack_a);
 }
 
@@ -715,6 +713,11 @@ void	ft_sort_five(t_list **stack_a, t_list **stack_b)
 	int	count;
 	int	size;
 
+	if (ft_lstsize(*stack_a) == 2)
+	{
+		ft_sort_remain(stack_a);
+		return ;
+	}
 	size = ft_lstsize(*stack_a) / 2;
 	count = -1;
 	pivot = ft_get_pivot(*stack_a);
@@ -732,7 +735,6 @@ void	ft_small_stack(char **argv)
 {
 	t_list	*stack_a;
 	t_list	*stack_b;
-	int		*array;
 	int		count;
 
 	if (!ft_check_nbr(argv) || ft_sorted_max(argv))
@@ -740,15 +742,14 @@ void	ft_small_stack(char **argv)
 	stack_a = ft_stack_a(argv);
 	if (!stack_a)
 		return ;
-	array = ft_get_index(stack_a);
-	ft_set_index(stack_a, array);
-	free(array);
+	ft_get_index(stack_a);
 	stack_b = NULL;
 	ft_sort_five(&stack_a, &stack_b);
-	if (ft_lstsize(stack_b) > 1 && stack_b->index != ft_lstlast(stack_a)->index + 1)
+	if (ft_lstsize(stack_b) > 1 && stack_b->index \
+			!= ft_lstlast(stack_a)->index + 1)
 		ft_sort_remain(&stack_b);
 	count = -1;
-	while (++count <= ft_lstsize(stack_b))
+	while (stack_b && ++count <= ft_lstsize(stack_b))
 	{
 		ft_push_node(&stack_b, &stack_a, "pa");
 		ft_rotate_nodes(&stack_a, "ra");
