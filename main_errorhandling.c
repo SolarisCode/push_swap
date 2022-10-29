@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/29 01:45:36 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/30 01:57:47 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -642,7 +642,7 @@ void	ft_push_back(t_list **stack_a, t_list **stack_b, t_pswap *push_swap)
 		else
 			return ;
 	}
-	ft_push_a(stack_b, stack_a, push_swap);
+	ft_push_a(stack_b, stack_a, push_swap->top, push_swap->bottom);
 	ft_push_back(stack_a, stack_b, push_swap);
 }
 
