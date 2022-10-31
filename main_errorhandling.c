@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/25 22:03:49 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/10/31 23:17:30 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -610,14 +610,14 @@ void	ft_sort_stack(t_list **stack_a, t_list **stack_b)
 	ft_sort_stack(stack_a, stack_b);
 }
 
-void	ft_sort_remain(t_list **stack)
+void	ft_sort_remain(t_list **stack, char *action)
 {
 	t_list	*head;
 
 	head = *stack;
 	if (head->num > (*stack)->next->num)
 	{
-		ft_printf("sa\n");
+		ft_printf("%s\n", action);
 		head = (*stack)->next;
 		head->prev = NULL;
 		head->next = *stack;
@@ -652,7 +652,7 @@ void	ft_check_input(char **argv)
 		return ;
 	stack_b = NULL;
 	stack_b = ft_stack_b(&stack_a, &stack_b);
-	ft_sort_remain(&stack_a);
+	ft_sort_remain(&stack_a, "sa");
 	ft_sort_stack(&stack_a, &stack_b);
 	ft_free_stack(&stack_a);
 	ft_free_stack(&stack_b);
@@ -687,7 +687,7 @@ void	ft_remain_five(t_list **stack)
 	if (ft_sorted_stack(*stack))
 		return ;
 	else if (ft_lstsize(*stack) == 2)
-		ft_sort_remain(stack);
+		ft_sort_remain(stack, "sa");
 	else
 	{
 		while (++count < 3)
@@ -715,7 +715,7 @@ void	ft_sort_five(t_list **stack_a, t_list **stack_b)
 
 	if (ft_lstsize(*stack_a) == 2)
 	{
-		ft_sort_remain(stack_a);
+		ft_sort_remain(stack_a, "sa");
 		return ;
 	}
 	size = ft_lstsize(*stack_a) / 2;
@@ -747,7 +747,7 @@ void	ft_small_stack(char **argv)
 	ft_sort_five(&stack_a, &stack_b);
 	if (ft_lstsize(stack_b) > 1 && stack_b->index \
 			!= ft_lstlast(stack_a)->index + 1)
-		ft_sort_remain(&stack_b);
+		ft_sort_remain(&stack_b, "sb");
 	count = -1;
 	while (stack_b && ++count <= ft_lstsize(stack_b))
 	{
