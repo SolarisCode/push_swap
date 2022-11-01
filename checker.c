@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/31 17:20:47 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/31 23:01:19 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/11/01 01:00:32 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ bool	ft_sorted_max(char **argv)
 	while (argv[++count + 1])
 		if (ft_atolong(argv[count]) > ft_atolong(argv[count + 1]))
 			return (false);
-	return (ft_putstr_fd("OK", 1), true);
+	return (ft_putstr_fd("OK\n", 1), true);
 }
 
 int	ft_strcmp(const char *s1, const char *s2)
@@ -200,7 +200,6 @@ void	ft_push_node(t_list **src, t_list **dst)
 		tmp = *src;
 		*src = (*src)->next;
 		(*src)->prev = NULL;
-		ft_printf("pb\n");
 		free(tmp);
 		return ;
 	}
@@ -326,6 +325,7 @@ void	ft_check_input(char **argv)
 		ft_putstr_fd("OK\n", 1);
 	else
 		ft_putstr_fd("KO\n", 1);
+	ft_free_op(list_op);
 	ft_free_stack(&stack_a);
 	ft_free_stack(&stack_b);
 }
@@ -334,6 +334,12 @@ int	main(int argc, char *argv[])
 {
 	if (argc < 2)
 		return (1);
+	else if (argc == 2)
+	{
+		ft_check_nbr(&argv[1]);
+		ft_check_max(&argv[1]);
+		return (1);
+	}
 	else
 		ft_check_input(&argv[1]);
 	return (0);

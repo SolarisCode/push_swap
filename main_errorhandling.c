@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 18:49:04 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/31 23:17:30 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/11/01 00:40:54 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,34 +64,14 @@ bool	ft_check_nbr(char **argv)
 			index ++;
 		while (argv[count][++index])
 			if (!ft_isdigit(argv[count][index]))
-				return (ft_putstr_fd("Error\n", 1), false);
+				return (ft_putstr_fd("Error\n", 2), false);
 		index = -1;
 		while (argv[++index])
 			if (count != index && !ft_strcmp(argv[count], argv[index]))
-				return (ft_putstr_fd("Error\n", 1), false);
+				return (ft_putstr_fd("Error\n", 2), false);
 	}
 	return (true);
 }
-
-// bool	ft_check_max(char **argv, int *array)
-// {
-// 	int		count;
-// 	bool	max;
-//
-// 	count = -1;
-// 	max = false;
-// 	while (argv[++count])
-// 	{
-// 		if (argv[count][0] == '-' && array[count] > 0)
-// 			max = true;
-// 		else if (argv[count][0] != '-' && array[count] < 0)
-// 			max = true;
-// 	}
-// 	free(array);
-// 	if (max)
-// 		ft_putstr_fd("Error\n", 1);
-// 	return (max);
-// }
 
 bool	ft_check_max(char **argv)
 {
@@ -107,28 +87,15 @@ bool	ft_check_max(char **argv)
 
 bool	ft_sorted_max(char **argv)
 {
-	int	size;
 	int	count;
-	int	*array;
 
-	size = 0;
 	if (ft_check_max(argv))
 		return (true);
-	while (argv[size])
-		size ++;
-	array = (int *)ft_calloc(size, sizeof(int));
-	if (!array)
-		return (NULL);
 	count = -1;
-	while (argv[++count])
-		array[count] = (int)ft_atolong(argv[count]);
-	count = 0;
-	while (count <= size - 2 && array[count] < array[count + 1])
-		count ++;
-	if (count == size - 1)
-		return (free(array), true);
-	free(array);
-	return (false);
+	while (argv[++count + 1])
+		if (ft_atolong(argv[count]) > ft_atolong(argv[count + 1]))
+			return (false);
+	return (true);
 }
 
 void	ft_swap(int *array, int x, int y)
@@ -762,6 +729,12 @@ int	main(int argc, char *argv[])
 {
 	if (argc < 2)
 		return (1);
+	else if (argc == 2)
+	{
+		ft_check_nbr(&argv[1]);
+		ft_check_max(&argv[1]);
+		return (1);
+	}
 	else if (argc < 7)
 		ft_small_stack(&argv[1]);
 	else
