@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/10 21:38:17 by melkholy          #+#    #+#             */
-/*   Updated: 2022/10/15 00:08:36 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/11/01 19:29:58 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,47 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+// int	ft_get_median(int *array, int size)
+// {
+// 	int	count;
+// 	int	diff[2];
+// 	int	median;
+//
+// 	median = (array[0] + array[size / 2] + array[size - 1]) / 3;
+// 	diff[0] = median - array[0];
+// 	if (median - array[0] < 0)
+// 		diff[0] *= -1;
+// 	diff[1] = 0;
+// 	count = 1;
+// 	ft_printf("Median: %d\n", median);
+// 	while (count < size && median > array[count])
+// 	{
+// 		if (diff[0] > median - array[count])
+// 		{
+// 			diff[0] = median - array[count];
+// 			if (median - array[count] < 0)
+// 				diff[0] *= -1;
+// 			diff[1] = count;
+// 		}
+// 		count ++;
+// 	}
+// 	return (array[diff[1]]);
+// }
+//
+// void	ft_print_stack(t_list *stack)
+// {
+// 	t_list	*tmp;
+//
+// 	tmp = stack;
+// 	ft_printf("Unsorted array\n");
+// 	while (tmp)
+// 	{
+// 		ft_printf("%d ", tmp->num);
+// 		tmp = tmp->next;
+// 	}
+// 	ft_printf("\n");
+// }
 
 void	ft_swap(int *array, int x, int y)
 {
