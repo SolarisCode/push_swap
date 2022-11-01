@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/01 18:44:32 by melkholy          #+#    #+#             */
-/*   Updated: 2022/11/01 19:13:00 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/11/02 00:23:05 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	ft_check_nbr(char **argv)
 	while (argv[++count])
 	{
 		index = -1;
-		if (argv[count][0] == '-')
+		if ((argv[count][0] == '-' || argv[count][0] == '+') && argv[count][1])
 			index ++;
 		while (argv[count][++index])
 			if (!ft_isdigit(argv[count][index]))
@@ -42,7 +42,7 @@ bool	ft_check_max(char **argv)
 	while (argv[++count])
 		if (ft_atolong(argv[count]) > INT_MAX || \
 				ft_atolong(argv[count]) < INT_MIN)
-			return (true);
+			return (ft_putstr_fd("Error\n", 2), true);
 	return (false);
 }
 
