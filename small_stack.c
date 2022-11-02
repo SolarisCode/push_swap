@@ -6,7 +6,7 @@
 /*   By: melkholy <melkholy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/01 18:59:58 by melkholy          #+#    #+#             */
-/*   Updated: 2022/11/01 19:28:19 by melkholy         ###   ########.fr       */
+/*   Updated: 2022/11/02 22:59:12 by melkholy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,15 @@
 bool	ft_sorted_stack(t_list *stack)
 {
 	t_list	*tmp;
-	int		size;
-	int		flag;
 
-	size = ft_lstsize(stack);
 	tmp = stack;
-	flag = 0;
 	while (tmp->next)
 	{
-		if (tmp->num < tmp->next->num)
-			flag ++;
+		if (tmp->num > tmp->next->num)
+			return (false);
 		tmp = tmp->next;
 	}
-	return (flag == size - 1);
+	return (true);
 }
 
 void	ft_remain_five(t_list **stack)
